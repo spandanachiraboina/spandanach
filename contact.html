@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us — LUXE STORE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --bg:#0d0d0d; --surface:#161616; --card:#1e1e1e;
+      --accent:#c8a96e; --accent-light:#e8cfa0;
+      --text:#f0ece4; --muted:#888; --border:#2a2a2a;
+    }
+    html { scroll-behavior:smooth; }
+    body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; overflow-x:hidden; }
+
+    /* NAV */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:1.2rem 4rem;
+      background:rgba(13,13,13,0.9); backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--border);
+    }
+    .logo { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:900; letter-spacing:0.12em; color:var(--accent); text-decoration:none; }
+    .nav-links { display:flex; gap:2.5rem; list-style:none; }
+    .nav-links a { color:var(--muted); text-decoration:none; font-size:0.85rem; letter-spacing:0.1em; text-transform:uppercase; transition:color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color:var(--accent); }
+    .nav-actions { display:flex; gap:1.2rem; align-items:center; }
+    .nav-icon { background:none; border:none; color:var(--text); font-size:1.2rem; cursor:pointer; position:relative; transition:color 0.3s; }
+    .nav-icon:hover { color:var(--accent); }
+    .cart-badge { position:absolute; top:-6px; right:-8px; background:var(--accent); color:#000; font-size:0.6rem; font-weight:700; width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+
+    /* HERO HEADER */
+    .contact-hero {
+      padding: 9rem 4rem 5rem;
+      background: linear-gradient(180deg, rgba(200,169,110,0.07) 0%, transparent 100%);
+      border-bottom: 1px solid var(--border);
+      position: relative; overflow: hidden;
+    }
+    .contact-hero::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse 50% 80% at 80% 50%, rgba(200,169,110,0.08), transparent);
+      pointer-events: none;
+    }
+    .hero-label { font-size:0.7rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--accent); margin-bottom:1rem; }
+    .contact-hero h1 { font-family:'Playfair Display',serif; font-size:clamp(2.5rem,6vw,5rem); font-weight:900; line-height:1.05; }
+    .contact-hero h1 em { color:var(--accent); font-style:italic; }
+    .contact-hero p { color:var(--muted); font-size:1rem; line-height:1.8; margin-top:1rem; max-width:500px; }
+
+    /* CONTACT INFO STRIP */
+    .info-strip {
+      display:grid; grid-template-columns:repeat(4,1fr);
+      border-bottom:1px solid var(--border);
+    }
+    .info-card {
+      padding:2.5rem 2rem;
+      border-right:1px solid var(--border);
+      display:flex; flex-direction:column; gap:0.6rem;
+      transition:background 0.3s;
+    }
+    .info-card:last-child { border-right:none; }
+    .info-card:hover { background:var(--surface); }
+    .info-icon { font-size:1.5rem; margin-bottom:0.3rem; }
+    .info-title { font-size:0.7rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent); }
+    .info-main { font-size:0.95rem; font-weight:500; }
+    .info-sub { font-size:0.78rem; color:var(--muted); }
+
+    /* MAIN SECTION */
+    .main-section {
+      display:grid; grid-template-columns:1fr 1fr;
+    }
+
+    /* FORM HALF */
+    .form-half {
+      padding:4rem;
+      border-right:1px solid var(--border);
+    }
+    .section-label { font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); margin-bottom:0.8rem; }
+    .form-half h2 { font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; margin-bottom:2rem; }
+
+    .tabs { display:flex; gap:0; margin-bottom:2.5rem; border:1px solid var(--border); }
+    .tab-btn {
+      flex:1; padding:0.8rem; background:transparent;
+      border:none; color:var(--muted); font-family:'DM Sans',sans-serif;
+      font-size:0.8rem; letter-spacing:0.08em; text-transform:uppercase;
+      cursor:pointer; transition:all 0.2s; border-right:1px solid var(--border);
+    }
+    .tab-btn:last-child { border-right:none; }
+    .tab-btn.active { background:var(--accent); color:#000; font-weight:600; }
+
+    .form-group { margin-bottom:1.5rem; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+    .form-group label { display:block; font-size:0.72rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:0.6rem; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width:100%; padding:0.9rem 1.2rem;
+      background:var(--card); border:1px solid var(--border);
+      color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.9rem;
+      outline:none; transition:border-color 0.3s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color:var(--accent); }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color:var(--muted); }
+    .form-group select option { background:var(--card); }
+    .form-group textarea { resize:vertical; min-height:140px; }
+    .char-count { text-align:right; font-size:0.7rem; color:var(--muted); margin-top:0.4rem; }
+
+    .rating-input { display:flex; gap:0.3rem; font-size:1.5rem; }
+    .star-input { cursor:pointer; color:var(--muted); transition:color 0.2s; }
+    .star-input:hover, .star-input.active { color:var(--accent); }
+
+    .file-drop {
+      border:2px dashed var(--border); padding:2rem; text-align:center;
+      cursor:pointer; transition:border-color 0.3s;
+      display:flex; flex-direction:column; align-items:center; gap:0.5rem;
+    }
+    .file-drop:hover { border-color:var(--accent); }
+    .file-drop-icon { font-size:2rem; }
+    .file-drop-text { font-size:0.82rem; color:var(--muted); }
+    .file-drop-text span { color:var(--accent); }
+
+    .submit-btn {
+      width:100%; padding:1rem;
+      background:var(--accent); color:#000;
+      border:none; cursor:pointer;
+      font-family:'DM Sans',sans-serif;
+      font-size:0.85rem; font-weight:700;
+      letter-spacing:0.1em; text-transform:uppercase;
+      transition:background 0.3s, transform 0.2s;
+      display:flex; align-items:center; justify-content:center; gap:0.5rem;
+    }
+    .submit-btn:hover { background:var(--accent-light); transform:translateY(-2px); }
+
+    /* SUCCESS MESSAGE */
+    .success-msg {
+      display:none;
+      background:rgba(109,187,109,0.1); border:1px solid #6dbb6d;
+      padding:1.5rem; text-align:center; margin-top:1.5rem;
+    }
+    .success-msg.show { display:block; animation:fadeUp 0.4s ease; }
+    .success-icon { font-size:2rem; margin-bottom:0.5rem; }
+    .success-text { font-size:0.9rem; color:#6dbb6d; font-weight:500; }
+
+    /* INFO HALF */
+    .info-half { padding:4rem; }
+    .info-half h2 { font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; margin-bottom:2rem; }
+
+    .faq-list { margin-bottom:3rem; }
+    .faq-item {
+      border-bottom:1px solid var(--border);
+      overflow:hidden;
+    }
+    .faq-q {
+      width:100%; background:none; border:none; color:var(--text);
+      font-family:'DM Sans',sans-serif; font-size:0.9rem; font-weight:500;
+      padding:1.2rem 0;
+      display:flex; align-items:center; justify-content:space-between;
+      cursor:pointer; text-align:left; transition:color 0.2s;
+    }
+    .faq-q:hover { color:var(--accent); }
+    .faq-icon { font-size:1rem; color:var(--accent); transition:transform 0.3s; flex-shrink:0; }
+    .faq-a { max-height:0; overflow:hidden; transition:max-height 0.4s ease, padding 0.3s; }
+    .faq-a p { color:var(--muted); font-size:0.85rem; line-height:1.8; padding-bottom:1.2rem; }
+    .faq-item.open .faq-a { max-height:200px; }
+    .faq-item.open .faq-icon { transform:rotate(45deg); }
+    .faq-item.open .faq-q { color:var(--accent); }
+
+    /* MAP SECTION */
+    .map-section {
+      padding:0 4rem 4rem;
+    }
+    .map-label { font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); margin-bottom:0.8rem; }
+    .map-title { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:700; margin-bottom:1.5rem; }
+    .map-frame {
+      width:100%; height:380px;
+      background:linear-gradient(135deg,#141414,#1e1e1e);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:1rem; border:1px solid var(--border); position:relative;
+      overflow:hidden;
+    }
+    .map-frame::before {
+      content:'';
+      position:absolute; inset:0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(200,169,110,0.03) 40px, rgba(200,169,110,0.03) 41px),
+                  repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(200,169,110,0.03) 40px, rgba(200,169,110,0.03) 41px);
+    }
+    .map-pin { font-size:3rem; animation:bounce 2s infinite; }
+    .map-text { font-size:0.9rem; color:var(--muted); text-align:center; }
+    .map-address { font-weight:600; color:var(--text); font-size:1rem; }
+
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+    /* STORE LOCATOR */
+    .stores-section { padding:0 4rem 5rem; }
+    .stores-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }
+    .store-card {
+      background:var(--card); padding:2rem;
+      border:1px solid var(--border); transition:border-color 0.3s;
+    }
+    .store-card:hover { border-color:var(--accent); }
+    .store-city { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; margin-bottom:0.3rem; }
+    .store-addr { font-size:0.82rem; color:var(--muted); line-height:1.6; margin-bottom:1rem; }
+    .store-hours { font-size:0.78rem; color:var(--accent); }
+    .store-divider { height:1px; background:var(--border); margin:1rem 0; }
+    .store-contact { display:flex; flex-direction:column; gap:0.4rem; }
+    .store-contact a { font-size:0.82rem; color:var(--muted); text-decoration:none; transition:color 0.2s; }
+    .store-contact a:hover { color:var(--accent); }
+
+    /* SOCIAL SECTION */
+    .social-section {
+      background:var(--surface);
+      border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+      padding:4rem; text-align:center;
+    }
+    .social-section h2 { font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; margin-bottom:0.5rem; }
+    .social-section p { color:var(--muted); margin-bottom:2rem; }
+    .social-grid { display:flex; justify-content:center; gap:1rem; flex-wrap:wrap; }
+    .social-card {
+      display:flex; align-items:center; gap:0.8rem;
+      background:var(--card); border:1px solid var(--border);
+      padding:1rem 2rem; text-decoration:none; color:var(--text);
+      transition:all 0.3s; min-width:180px; justify-content:center;
+    }
+    .social-card:hover { border-color:var(--accent); color:var(--accent); }
+    .social-card .icon { font-size:1.3rem; }
+    .social-card .label { font-size:0.8rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; }
+    .social-card .count { font-size:0.7rem; color:var(--muted); }
+
+    /* FOOTER */
+    footer { background:var(--surface); padding:4rem; border-top:1px solid var(--border); }
+    .footer-grid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:3rem; margin-bottom:3rem; }
+    .footer-brand .logo { display:block; margin-bottom:1rem; font-size:1.3rem; }
+    .footer-desc { color:var(--muted); font-size:0.85rem; line-height:1.7; margin-bottom:1.5rem; }
+    .social-links { display:flex; gap:0.8rem; }
+    .social-btn { width:36px; height:36px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--muted); text-decoration:none; font-size:0.9rem; transition:all 0.3s; }
+    .social-btn:hover { color:var(--accent); border-color:var(--accent); }
+    .footer-col h4 { font-size:0.75rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--text); margin-bottom:1.2rem; }
+    .footer-col ul { list-style:none; }
+    .footer-col li { margin-bottom:0.7rem; }
+    .footer-col a { color:var(--muted); text-decoration:none; font-size:0.85rem; transition:color 0.3s; }
+    .footer-col a:hover { color:var(--accent); }
+    .footer-bottom { display:flex; align-items:center; justify-content:space-between; padding-top:2rem; border-top:1px solid var(--border); font-size:0.75rem; color:var(--muted); }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+    @media (max-width:1024px) {
+      nav{padding:1rem 2rem;}
+      .contact-hero{padding:7rem 2rem 3rem;}
+      .info-strip{grid-template-columns:1fr 1fr;}
+      .info-card:nth-child(2){border-right:none;}
+      .info-card:nth-child(3){border-top:1px solid var(--border);}
+      .main-section{grid-template-columns:1fr;}
+      .form-half{border-right:none;border-bottom:1px solid var(--border);padding:2.5rem 2rem;}
+      .info-half{padding:2.5rem 2rem;}
+      .map-section{padding:0 2rem 3rem;}
+      .stores-section{padding:0 2rem 3rem;}
+      .stores-grid{grid-template-columns:1fr 1fr;}
+      .footer-grid{grid-template-columns:1fr 1fr;gap:2rem;}
+    }
+    @media (max-width:640px) {
+      .nav-links{display:none;}
+      .info-strip{grid-template-columns:1fr;}
+      .info-card{border-right:none;border-bottom:1px solid var(--border);}
+      .form-row{grid-template-columns:1fr;}
+      .stores-grid{grid-template-columns:1fr;}
+      .social-grid{flex-direction:column;align-items:center;}
+      .tabs{flex-direction:column;}
+      .tab-btn{border-right:none;border-bottom:1px solid var(--border);}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">LUXE</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="product.html">Shop</a></li>
+    <li><a href="product.html">Collections</a></li>
+    <li><a href="contact.html" class="active">Contact</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="nav-icon">🔍</button>
+    <button class="nav-icon">♡</button>
+    <button class="nav-icon">🛒 <span class="cart-badge">0</span></button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="contact-hero">
+  <p class="hero-label">✦ We'd Love to Hear From You</p>
+  <h1>Get in <em>Touch</em></h1>
+  <p>Questions about your order, need styling advice, or just want to say hello? Our team is here for you — always.</p>
+</div>
+
+<!-- INFO STRIP -->
+<div class="info-strip">
+  <div class="info-card">
+    <div class="info-icon">📍</div>
+    <div class="info-title">Our Flagship</div>
+    <div class="info-main">Bandra Kurla Complex</div>
+    <div class="info-sub">Mumbai, MH 400051</div>
+  </div>
+  <div class="info-card">
+    <div class="info-icon">📞</div>
+    <div class="info-title">Call Us</div>
+    <div class="info-main">+91 22 6789 0123</div>
+    <div class="info-sub">Mon–Sat, 10AM–7PM IST</div>
+  </div>
+  <div class="info-card">
+    <div class="info-icon">✉️</div>
+    <div class="info-title">Email</div>
+    <div class="info-main">hello@luxestore.in</div>
+    <div class="info-sub">Response within 24 hours</div>
+  </div>
+  <div class="info-card">
+    <div class="info-icon">💬</div>
+    <div class="info-title">Live Chat</div>
+    <div class="info-main">Chat Now →</div>
+    <div class="info-sub">Available 9AM–9PM IST</div>
+  </div>
+</div>
+
+<!-- MAIN: FORM + FAQ -->
+<div class="main-section">
+  <!-- FORM -->
+  <div class="form-half">
+    <p class="section-label">Send a Message</p>
+    <h2>How Can We Help?</h2>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'general')">General</button>
+      <button class="tab-btn" onclick="switchTab(this,'order')">My Order</button>
+      <button class="tab-btn" onclick="switchTab(this,'return')">Returns</button>
+      <button class="tab-btn" onclick="switchTab(this,'feedback')">Feedback</button>
+    </div>
+
+    <div id="formContent">
+      <div class="form-row">
+        <div class="form-group">
+          <label>First Name *</label>
+          <input type="text" placeholder="Priya" id="firstName"/>
+        </div>
+        <div class="form-group">
+          <label>Last Name *</label>
+          <input type="text" placeholder="Sharma" id="lastName"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" placeholder="priya@example.com" id="email"/>
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="tel" placeholder="+91 98765 43210" id="phone"/>
+        </div>
+      </div>
+      <div class="form-group" id="orderNumGroup" style="display:none;">
+        <label>Order Number</label>
+        <input type="text" placeholder="LX-2025-XXXXXX" id="orderNum"/>
+      </div>
+      <div class="form-group">
+        <label>Subject *</label>
+        <select id="subject">
+          <option value="">Select a topic...</option>
+          <option>Product Enquiry</option>
+          <option>Order Status</option>
+          <option>Return/Exchange</option>
+          <option>Shipping Query</option>
+          <option>Payment Issue</option>
+          <option>Styling Advice</option>
+          <option>Wholesale / B2B</option>
+          <option>Press & Media</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Message *</label>
+        <textarea placeholder="Tell us how we can help you..." id="message" oninput="updateCharCount(this)"></textarea>
+        <div class="char-count"><span id="charCount">0</span>/500</div>
+      </div>
+      <div class="form-group" id="ratingGroup" style="display:none;">
+        <label>Rate Your Experience</label>
+        <div class="rating-input" id="starRating">
+          <span class="star-input" onclick="setRating(1)">★</span>
+          <span class="star-input" onclick="setRating(2)">★</span>
+          <span class="star-input" onclick="setRating(3)">★</span>
+          <span class="star-input" onclick="setRating(4)">★</span>
+          <span class="star-input" onclick="setRating(5)">★</span>
+        </div>
+      </div>
+      <div class="form-group" id="fileGroup" style="display:none;">
+        <label>Attach Screenshot / Photo</label>
+        <div class="file-drop" onclick="document.getElementById('fileInput').click()">
+          <div class="file-drop-icon">📎</div>
+          <div class="file-drop-text"><span>Click to upload</span> or drag & drop</div>
+          <div class="file-drop-text">PNG, JPG up to 5MB</div>
+        </div>
+        <input type="file" id="fileInput" style="display:none;" accept="image/*" onchange="handleFile(this)"/>
+        <div id="fileName" style="font-size:0.75rem;color:var(--accent);margin-top:0.5rem;"></div>
+      </div>
+      <div class="form-group">
+        <label style="display:flex;align-items:center;gap:0.7rem;text-transform:none;letter-spacing:0;cursor:pointer;">
+          <input type="checkbox" id="gdprCheck" style="accent-color:var(--accent);"/>
+          <span style="color:var(--muted);font-size:0.82rem;">I agree to the <a href="#" style="color:var(--accent);">Privacy Policy</a> and consent to being contacted by LUXE.</span>
+        </label>
+      </div>
+      <button class="submit-btn" onclick="submitForm()">
+        <span id="btnText">Send Message →</span>
+      </button>
+      <div class="success-msg" id="successMsg">
+        <div class="success-icon">✅</div>
+        <div class="success-text">Message sent! We'll get back to you within 24 hours.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="info-half">
+    <p class="section-label">Quick Answers</p>
+    <h2>Frequently Asked Questions</h2>
+
+    <div class="faq-list">
+      <div class="faq-item open">
+        <button class="faq-q" onclick="toggleFAQ(this)">
+          <span>How long does delivery take?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a"><p>Standard delivery takes 3–5 business days across India. Express delivery (1–2 days) is available for metro cities. Free shipping on all orders above ₹999. You'll receive a tracking link via email once your order ships.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFAQ(this)">
+          <span>What is your return policy?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a"><p>We accept returns within 30 days of delivery. Items must be unworn, unwashed, and with tags intact. Initiate a return from your account dashboard or contact us directly. Refunds are processed within 5–7 business days.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFAQ(this)">
+          <span>Are all products 100% authentic?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a"><p>Absolutely. Every product on LUXE is sourced directly from brands or authorized distributors. We have a zero-tolerance policy for counterfeits and each item goes through a quality check before dispatch.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFAQ(this)">
+          <span>Can I modify or cancel my order?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a"><p>Orders can be modified or cancelled within 1 hour of placement. After that, the order enters processing and changes may not be possible. Please contact us immediately at orders@luxestore.in or call +91 22 6789 0123.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFAQ(this)">
+          <span>What payment methods do you accept?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a"><p>We accept all major credit/debit cards, UPI (GPay, PhonePe, Paytm), net banking, wallets, and EMI options. All transactions are SSL-encrypted and PCI-DSS compliant for your security.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFAQ(this)">
+          <span>Do you ship internationally?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a"><p>Yes! We ship to 30+ countries worldwide. International delivery takes 7–14 business days. Customs duties and import taxes, if applicable, are borne by the buyer. Check our shipping page for country-specific rates.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFAQ(this)">
+          <span>How do I find my size?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a"><p>Each product page includes a detailed size guide. We recommend measuring your chest, waist, and hip in centimetres and comparing to the brand-specific chart. If between sizes, we generally suggest sizing up for a relaxed fit.</p></div>
+      </div>
+    </div>
+
+    <!-- RESPONSE TIME CARD -->
+    <div style="background:var(--card);border:1px solid var(--border);padding:2rem;">
+      <p class="section-label" style="margin-bottom:0.5rem;">Our Promise</p>
+      <p style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;margin-bottom:1.2rem;">Response Times</p>
+      <div style="display:flex;flex-direction:column;gap:0.8rem;">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:0.7rem 0;border-bottom:1px solid var(--border);">
+          <span style="font-size:0.85rem;color:var(--muted);">💬 Live Chat</span>
+          <span style="font-size:0.8rem;color:#6dbb6d;font-weight:600;">Under 2 minutes</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:0.7rem 0;border-bottom:1px solid var(--border);">
+          <span style="font-size:0.85rem;color:var(--muted);">✉️ Email Support</span>
+          <span style="font-size:0.8rem;color:var(--accent);font-weight:600;">Within 24 hours</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:0.7rem 0;border-bottom:1px solid var(--border);">
+          <span style="font-size:0.85rem;color:var(--muted);">📞 Phone</span>
+          <span style="font-size:0.8rem;color:var(--accent);font-weight:600;">Mon–Sat 10AM–7PM</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:0.7rem 0;">
+          <span style="font-size:0.85rem;color:var(--muted);">📱 WhatsApp</span>
+          <span style="font-size:0.8rem;color:var(--accent);font-weight:600;">+91 98765 00123</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAP SECTION -->
+<div class="map-section" style="padding-top:4rem;">
+  <p class="map-label">Find Us</p>
+  <h2 class="map-title">Visit Our Flagship Store</h2>
+  <div class="map-frame">
+    <div class="map-pin">📍</div>
+    <div class="map-address">LUXE Store, Level 3, Jio World Drive</div>
+    <div class="map-text">Bandra Kurla Complex, Mumbai 400051</div>
+    <div style="margin-top:1rem;">
+      <a href="#" style="display:inline-block;background:var(--accent);color:#000;padding:0.7rem 1.5rem;font-size:0.8rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;transition:background 0.3s;" onmouseover="this.style.background='var(--accent-light)'" onmouseout="this.style.background='var(--accent)'">Get Directions →</a>
+    </div>
+  </div>
+</div>
+
+<!-- STORE LOCATOR -->
+<div class="stores-section" style="padding-top:3rem;">
+  <p class="map-label">All Stores</p>
+  <h2 class="map-title">Locate a LUXE Near You</h2>
+  <div class="stores-grid">
+    <div class="store-card">
+      <div class="store-city">Mumbai</div>
+      <div class="store-addr">Level 3, Jio World Drive<br>Bandra Kurla Complex, 400051</div>
+      <div class="store-hours">Mon–Sun: 10AM – 10PM</div>
+      <div class="store-divider"></div>
+      <div class="store-contact">
+        <a href="tel:+912267890123">📞 +91 22 6789 0123</a>
+        <a href="mailto:mumbai@luxestore.in">✉️ mumbai@luxestore.in</a>
+      </div>
+    </div>
+    <div class="store-card">
+      <div class="store-city">Delhi</div>
+      <div class="store-addr">DLF Promenade, Ground Floor<br>Vasant Kunj, New Delhi 110070</div>
+      <div class="store-hours">Mon–Sun: 11AM – 9PM</div>
+      <div class="store-divider"></div>
+      <div class="store-contact">
+        <a href="tel:+911146781234">📞 +91 11 4678 1234</a>
+        <a href="mailto:delhi@luxestore.in">✉️ delhi@luxestore.in</a>
+      </div>
+    </div>
+    <div class="store-card">
+      <div class="store-city">Bangalore</div>
+      <div class="store-addr">UB City Mall, Level 2<br>Vittal Mallya Road, 560001</div>
+      <div class="store-hours">Mon–Sun: 10AM – 9PM</div>
+      <div class="store-divider"></div>
+      <div class="store-contact">
+        <a href="tel:+918067891234">📞 +91 80 6789 1234</a>
+        <a href="mailto:bangalore@luxestore.in">✉️ bangalore@luxestore.in</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SOCIAL SECTION -->
+<div class="social-section">
+  <h2>Follow Our Story</h2>
+  <p>Join the LUXE community across platforms for daily style inspiration and exclusive updates.</p>
+  <div class="social-grid">
+    <a href="#" class="social-card"><span class="icon">📸</span><div><div class="label">Instagram</div><div class="count">@luxestore.in · 280K</div></div></a>
+    <a href="#" class="social-card"><span class="icon">▶️</span><div><div class="label">YouTube</div><div class="count">LUXE Styles · 95K</div></div></a>
+    <a href="#" class="social-card"><span class="icon">🐦</span><div><div class="label">Twitter/X</div><div class="count">@luxestore · 42K</div></div></a>
+    <a href="#" class="social-card"><span class="icon">💼</span><div><div class="label">LinkedIn</div><div class="count">LUXE Store · 18K</div></div></a>
+    <a href="#" class="social-card"><span class="icon">🎵</span><div><div class="label">Pinterest</div><div class="count">LUXE India · 120K</div></div></a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="logo">LUXE</a>
+      <p class="footer-desc">A curated fashion destination for those who believe style is a form of self-expression. Quality, authenticity, and design at the heart of everything.</p>
+      <div class="social-links">
+        <a href="#" class="social-btn">in</a>
+        <a href="#" class="social-btn">ig</a>
+        <a href="#" class="social-btn">tw</a>
+        <a href="#" class="social-btn">yt</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="product.html">New Arrivals</a></li>
+        <li><a href="product.html">Women</a></li>
+        <li><a href="product.html">Men</a></li>
+        <li><a href="product.html">Accessories</a></li>
+        <li><a href="product.html">Sale</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Help</h4>
+      <ul>
+        <li><a href="contact.html">Contact Us</a></li>
+        <li><a href="#">Size Guide</a></li>
+        <li><a href="#">Returns</a></li>
+        <li><a href="#">Track Order</a></li>
+        <li><a href="#">FAQs</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About LUXE</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Press</a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 LUXE Store. All rights reserved.</span>
+    <span>Secure payments · SSL Encrypted · PCI Compliant</span>
+  </div>
+</footer>
+
+<script>
+  // TABS
+  function switchTab(btn, type) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('orderNumGroup').style.display = (type === 'order' || type === 'return') ? 'block' : 'none';
+    document.getElementById('ratingGroup').style.display = type === 'feedback' ? 'block' : 'none';
+    document.getElementById('fileGroup').style.display = (type === 'return' || type === 'order') ? 'block' : 'none';
+  }
+
+  // FAQ
+  function toggleFAQ(btn) {
+    const item = btn.parentElement;
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  }
+
+  // Char count
+  function updateCharCount(el) {
+    const count = el.value.length;
+    document.getElementById('charCount').textContent = count;
+    if (count > 500) el.value = el.value.substring(0, 500);
+  }
+
+  // Star rating
+  let currentRating = 0;
+  function setRating(n) {
+    currentRating = n;
+    document.querySelectorAll('.star-input').forEach((s, i) => {
+      s.classList.toggle('active', i < n);
+    });
+  }
+
+  // File upload
+  function handleFile(input) {
+    if (input.files.length > 0) {
+      document.getElementById('fileName').textContent = '📎 ' + input.files[0].name;
+    }
+  }
+
+  // Form submit
+  function submitForm() {
+    const first = document.getElementById('firstName').value;
+    const email = document.getElementById('email').value;
+    const message = document.getElementById('message').value;
+    const gdpr = document.getElementById('gdprCheck').checked;
+
+    if (!first || !email || !message) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+    if (!gdpr) {
+      alert('Please accept the Privacy Policy to continue.');
+      return;
+    }
+    const btn = document.querySelector('.submit-btn');
+    const txt = document.getElementById('btnText');
+    btn.disabled = true;
+    txt.textContent = 'Sending...';
+    setTimeout(() => {
+      txt.textContent = '✓ Sent!';
+      document.getElementById('successMsg').classList.add('show');
+      document.getElementById('firstName').value = '';
+      document.getElementById('lastName').value = '';
+      document.getElementById('email').value = '';
+      document.getElementById('phone').value = '';
+      document.getElementById('message').value = '';
+      document.getElementById('gdprCheck').checked = false;
+      document.getElementById('charCount').textContent = '0';
+      btn.disabled = false;
+      txt.textContent = 'Send Message →';
+      setTimeout(() => document.getElementById('successMsg').classList.remove('show'), 5000);
+    }, 1500);
+  }
+</script>
+</body>
+</html>
