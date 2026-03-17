@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shop — LUXE STORE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --bg:#0d0d0d; --surface:#161616; --card:#1e1e1e;
+      --accent:#c8a96e; --accent-light:#e8cfa0;
+      --text:#f0ece4; --muted:#888; --border:#2a2a2a;
+    }
+    html { scroll-behavior:smooth; }
+    body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; overflow-x:hidden; }
+
+    /* NAV */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:1.2rem 4rem;
+      background:rgba(13,13,13,0.9); backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--border);
+    }
+    .logo { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:900; letter-spacing:0.12em; color:var(--accent); text-decoration:none; }
+    .nav-links { display:flex; gap:2.5rem; list-style:none; }
+    .nav-links a { color:var(--muted); text-decoration:none; font-size:0.85rem; letter-spacing:0.1em; text-transform:uppercase; transition:color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color:var(--accent); }
+    .nav-actions { display:flex; gap:1.2rem; align-items:center; }
+    .nav-icon { background:none; border:none; color:var(--text); font-size:1.2rem; cursor:pointer; position:relative; transition:color 0.3s; }
+    .nav-icon:hover { color:var(--accent); }
+    .cart-badge { position:absolute; top:-6px; right:-8px; background:var(--accent); color:#000; font-size:0.6rem; font-weight:700; width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+
+    /* PAGE HEADER */
+    .page-header {
+      padding: 8rem 4rem 3rem;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(200,169,110,0.05), transparent);
+    }
+    .breadcrumb { font-size:0.75rem; color:var(--muted); margin-bottom:1rem; letter-spacing:0.05em; }
+    .breadcrumb a { color:var(--muted); text-decoration:none; }
+    .breadcrumb a:hover { color:var(--accent); }
+    .page-header h1 { font-family:'Playfair Display',serif; font-size:clamp(2rem,4vw,3rem); font-weight:700; }
+    .page-header p { color:var(--muted); margin-top:0.5rem; font-size:0.9rem; }
+
+    /* LAYOUT */
+    .shop-layout {
+      display:grid; grid-template-columns:260px 1fr;
+      gap:0; min-height:100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      padding:2.5rem 2rem;
+      border-right:1px solid var(--border);
+      position:sticky; top:72px; height:calc(100vh - 72px);
+      overflow-y:auto;
+    }
+    .filter-section { margin-bottom:2.5rem; }
+    .filter-title {
+      font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase;
+      color:var(--accent); margin-bottom:1.2rem;
+      display:flex; align-items:center; justify-content:space-between;
+      cursor:pointer;
+    }
+    .filter-options { display:flex; flex-direction:column; gap:0.6rem; }
+    .filter-opt {
+      display:flex; align-items:center; gap:0.7rem;
+      font-size:0.85rem; color:var(--muted); cursor:pointer;
+      transition:color 0.2s;
+    }
+    .filter-opt:hover { color:var(--text); }
+    .filter-opt input[type="checkbox"] {
+      appearance:none; width:16px; height:16px;
+      border:1px solid var(--border); background:transparent;
+      cursor:pointer; flex-shrink:0; position:relative; transition:border-color 0.2s;
+    }
+    .filter-opt input[type="checkbox"]:checked {
+      background:var(--accent); border-color:var(--accent);
+    }
+    .filter-opt input[type="checkbox"]:checked::after {
+      content:'✓'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+      font-size:0.6rem; color:#000; font-weight:700;
+    }
+    .filter-opt span { flex:1; }
+    .filter-count { font-size:0.7rem; color:var(--muted); }
+    .price-range { padding:0.5rem 0; }
+    .range-input {
+      width:100%; accent-color:var(--accent);
+      background:transparent; margin:0.5rem 0;
+    }
+    .range-labels { display:flex; justify-content:space-between; font-size:0.75rem; color:var(--muted); }
+    .color-swatches { display:flex; flex-wrap:wrap; gap:0.5rem; }
+    .color-swatch {
+      width:28px; height:28px; border-radius:50%;
+      cursor:pointer; border:2px solid transparent;
+      transition:border-color 0.2s; position:relative;
+    }
+    .color-swatch.active, .color-swatch:hover { border-color:var(--accent); }
+    .size-grid { display:flex; flex-wrap:wrap; gap:0.5rem; }
+    .size-btn {
+      width:44px; height:36px; background:transparent;
+      border:1px solid var(--border); color:var(--muted);
+      font-size:0.8rem; cursor:pointer; transition:all 0.2s;
+    }
+    .size-btn:hover, .size-btn.active { border-color:var(--accent); color:var(--accent); }
+
+    /* MAIN CONTENT */
+    .main-content { padding:2rem 3rem; }
+    .toolbar {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:2rem; padding-bottom:1.5rem;
+      border-bottom:1px solid var(--border);
+    }
+    .results-count { font-size:0.85rem; color:var(--muted); }
+    .toolbar-right { display:flex; gap:1rem; align-items:center; }
+    .sort-select {
+      background:var(--card); border:1px solid var(--border);
+      color:var(--text); padding:0.5rem 1rem;
+      font-family:'DM Sans',sans-serif; font-size:0.8rem;
+      outline:none; cursor:pointer;
+    }
+    .view-toggle { display:flex; gap:0.3rem; }
+    .view-btn {
+      width:32px; height:32px; background:none; border:1px solid var(--border);
+      color:var(--muted); cursor:pointer; display:flex; align-items:center; justify-content:center;
+      transition:all 0.2s;
+    }
+    .view-btn.active { border-color:var(--accent); color:var(--accent); }
+
+    /* ACTIVE FILTERS */
+    .active-filters { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.5rem; }
+    .filter-tag {
+      display:flex; align-items:center; gap:0.5rem;
+      background:var(--card); border:1px solid var(--border);
+      padding:0.3rem 0.8rem; font-size:0.75rem; color:var(--text);
+    }
+    .filter-tag button { background:none; border:none; color:var(--muted); cursor:pointer; font-size:0.8rem; }
+    .filter-tag button:hover { color:var(--accent); }
+
+    /* PRODUCTS GRID */
+    .products-grid {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem;
+    }
+    .products-grid.list-view {
+      grid-template-columns:1fr;
+    }
+    .product-card {
+      background:var(--card); cursor:pointer; transition:transform 0.3s;
+      text-decoration:none; color:inherit;
+    }
+    .product-card:hover { transform:translateY(-4px); }
+    .product-thumb {
+      aspect-ratio:3/4; overflow:hidden;
+      background:linear-gradient(135deg,#1a1a1a,#2d2d2d);
+      display:flex; align-items:center; justify-content:center;
+      font-size:5rem; position:relative;
+    }
+    .products-grid.list-view .product-thumb { aspect-ratio:1; width:200px; flex-shrink:0; }
+    .products-grid.list-view .product-card { display:flex; }
+    .products-grid.list-view .product-info { flex:1; padding:1.5rem; display:flex; flex-direction:column; justify-content:center; }
+    .product-badge {
+      position:absolute; top:1rem; left:1rem;
+      background:var(--accent); color:#000;
+      font-size:0.65rem; font-weight:700; padding:0.3rem 0.7rem;
+      letter-spacing:0.1em; text-transform:uppercase;
+    }
+    .product-badge.sale { background:#e05555; color:#fff; }
+    .product-badge.out { background:var(--muted); color:#fff; }
+    .wishlist-btn {
+      position:absolute; top:1rem; right:1rem;
+      width:34px; height:34px; background:rgba(13,13,13,0.7);
+      border:none; color:var(--text); font-size:1rem; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      opacity:0; transition:opacity 0.3s;
+    }
+    .product-card:hover .wishlist-btn { opacity:1; }
+    .product-actions {
+      position:absolute; bottom:0; left:0; right:0;
+      padding:1rem; transform:translateY(100%); transition:transform 0.3s;
+    }
+    .product-card:hover .product-actions { transform:translateY(0); }
+    .add-cart-btn {
+      width:100%; padding:0.7rem;
+      background:rgba(13,13,13,0.92); border:1px solid var(--border);
+      color:var(--text); font-size:0.75rem; font-weight:500;
+      letter-spacing:0.1em; text-transform:uppercase;
+      cursor:pointer; transition:background 0.2s, color 0.2s;
+    }
+    .add-cart-btn:hover { background:var(--accent); color:#000; border-color:var(--accent); }
+    .product-info { padding:1rem; }
+    .product-brand { font-size:0.65rem; color:var(--accent); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:0.3rem; }
+    .product-name { font-size:0.9rem; font-weight:500; margin-bottom:0.6rem; line-height:1.4; }
+    .product-price { display:flex; align-items:center; gap:0.6rem; }
+    .price { font-size:1rem; font-weight:600; color:var(--accent); }
+    .price-old { font-size:0.85rem; color:var(--muted); text-decoration:line-through; }
+    .product-rating { display:flex; align-items:center; gap:0.4rem; margin-top:0.5rem; }
+    .stars { color:var(--accent); font-size:0.75rem; }
+    .rating-count { font-size:0.7rem; color:var(--muted); }
+
+    /* PAGINATION */
+    .pagination {
+      display:flex; justify-content:center; gap:0.5rem; margin-top:3rem; padding-top:2rem;
+      border-top:1px solid var(--border);
+    }
+    .page-btn {
+      width:40px; height:40px; display:flex; align-items:center; justify-content:center;
+      background:var(--card); border:1px solid var(--border);
+      color:var(--muted); font-size:0.85rem; cursor:pointer; transition:all 0.2s;
+    }
+    .page-btn:hover, .page-btn.active { border-color:var(--accent); color:var(--accent); }
+    .page-btn.prev-next { width:auto; padding:0 1rem; gap:0.3rem; }
+
+    /* PRODUCT MODAL */
+    .modal-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,0.8); z-index:500;
+      align-items:center; justify-content:center;
+      padding:2rem;
+    }
+    .modal-overlay.open { display:flex; }
+    .modal {
+      background:var(--surface); max-width:1000px; width:100%;
+      display:grid; grid-template-columns:1fr 1fr;
+      max-height:90vh; overflow:hidden;
+      animation:fadeUp 0.3s ease;
+    }
+    .modal-image {
+      background:linear-gradient(135deg,#1e1e1e,#2d2d2d);
+      display:flex; align-items:center; justify-content:center;
+      font-size:10rem; min-height:500px; position:relative;
+    }
+    .modal-close {
+      position:absolute; top:1rem; right:1rem;
+      background:rgba(0,0,0,0.5); border:none; color:var(--text);
+      width:36px; height:36px; cursor:pointer; font-size:1.1rem;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .modal-close:hover { background:var(--accent); color:#000; }
+    .modal-body { padding:2.5rem; overflow-y:auto; }
+    .modal-brand { font-size:0.7rem; color:var(--accent); letter-spacing:0.2em; text-transform:uppercase; margin-bottom:0.5rem; }
+    .modal-title { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:700; margin-bottom:0.5rem; }
+    .modal-rating { display:flex; align-items:center; gap:0.5rem; margin-bottom:1.5rem; }
+    .modal-price { display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem; }
+    .modal-price .price { font-size:1.8rem; }
+    .modal-desc { color:var(--muted); font-size:0.9rem; line-height:1.8; margin-bottom:1.5rem; }
+    .option-label { font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:0.8rem; }
+    .sizes-row { display:flex; gap:0.5rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+    .size-option {
+      min-width:48px; height:40px; padding:0 0.8rem;
+      border:1px solid var(--border); background:transparent;
+      color:var(--muted); font-size:0.8rem; cursor:pointer; transition:all 0.2s;
+    }
+    .size-option:hover, .size-option.active { border-color:var(--accent); color:var(--accent); }
+    .qty-row { display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem; }
+    .qty-ctrl { display:flex; align-items:center; border:1px solid var(--border); }
+    .qty-btn { width:36px; height:36px; background:var(--card); border:none; color:var(--text); font-size:1rem; cursor:pointer; transition:color 0.2s; }
+    .qty-btn:hover { color:var(--accent); }
+    .qty-display { width:48px; text-align:center; background:transparent; border:none; color:var(--text); font-size:0.9rem; pointer-events:none; }
+    .modal-actions { display:flex; gap:0.8rem; }
+    .btn-primary { display:inline-flex; align-items:center; gap:0.5rem; background:var(--accent); color:#000; padding:0.9rem 2rem; font-family:'DM Sans',sans-serif; font-size:0.85rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; border:none; cursor:pointer; transition:background 0.3s; flex:1; justify-content:center; }
+    .btn-primary:hover { background:var(--accent-light); }
+    .btn-outline { display:inline-flex; align-items:center; justify-content:center; background:transparent; color:var(--text); padding:0.9rem 1.2rem; font-family:'DM Sans',sans-serif; font-size:0.85rem; border:1px solid var(--border); cursor:pointer; transition:all 0.2s; }
+    .btn-outline:hover { border-color:var(--accent); color:var(--accent); }
+    .modal-features { margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border); }
+    .feature-item { display:flex; gap:0.7rem; align-items:center; margin-bottom:0.8rem; font-size:0.8rem; color:var(--muted); }
+    .feature-icon { font-size:1rem; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    @media (max-width:1024px) {
+      nav{padding:1rem 2rem;}
+      .shop-layout{grid-template-columns:1fr;}
+      .sidebar{display:none;}
+      .main-content{padding:1.5rem 2rem;}
+      .page-header{padding:7rem 2rem 2rem;}
+      .products-grid{grid-template-columns:repeat(2,1fr);}
+      .modal{grid-template-columns:1fr;}
+      .modal-image{min-height:300px;font-size:7rem;}
+    }
+    @media (max-width:640px) {
+      .products-grid{grid-template-columns:repeat(2,1fr);gap:1rem;}
+      .toolbar{flex-direction:column;gap:1rem;align-items:flex-start;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">LUXE</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="product.html" class="active">Shop</a></li>
+    <li><a href="product.html">Collections</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="nav-icon">🔍</button>
+    <button class="nav-icon">♡</button>
+    <button class="nav-icon" onclick="toggleCart()">🛒 <span class="cart-badge" id="cartCount">0</span></button>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="breadcrumb"><a href="index.html">Home</a> / Shop</div>
+  <h1>All Collections</h1>
+  <p>Discover 12,000+ curated styles from 50+ premium brands</p>
+</div>
+
+<!-- SHOP LAYOUT -->
+<div class="shop-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="filter-section">
+      <div class="filter-title">Categories <span>−</span></div>
+      <div class="filter-options">
+        <label class="filter-opt"><input type="checkbox" checked/><span>Women's Fashion</span><span class="filter-count">3,240</span></label>
+        <label class="filter-opt"><input type="checkbox"/><span>Men's Wear</span><span class="filter-count">2,180</span></label>
+        <label class="filter-opt"><input type="checkbox"/><span>Footwear</span><span class="filter-count">1,560</span></label>
+        <label class="filter-opt"><input type="checkbox"/><span>Accessories</span><span class="filter-count">890</span></label>
+        <label class="filter-opt"><input type="checkbox"/><span>Jewellery</span><span class="filter-count">640</span></label>
+        <label class="filter-opt"><input type="checkbox"/><span>Sportswear</span><span class="filter-count">420</span></label>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-title">Price Range <span>−</span></div>
+      <div class="price-range">
+        <input type="range" class="range-input" min="0" max="50000" value="25000" id="priceRange" oninput="document.getElementById('priceVal').textContent='₹'+this.value.toLocaleString()"/>
+        <div class="range-labels"><span>₹0</span><span id="priceVal">₹25,000</span></div>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-title">Color <span>−</span></div>
+      <div class="color-swatches">
+        <div class="color-swatch active" style="background:#1a1a1a;" title="Black"></div>
+        <div class="color-swatch" style="background:#f5f5f5;border:1px solid #333;" title="White"></div>
+        <div class="color-swatch" style="background:#c0392b;" title="Red"></div>
+        <div class="color-swatch" style="background:#2980b9;" title="Blue"></div>
+        <div class="color-swatch" style="background:#27ae60;" title="Green"></div>
+        <div class="color-swatch" style="background:#c8a96e;" title="Gold"></div>
+        <div class="color-swatch" style="background:#9b59b6;" title="Purple"></div>
+        <div class="color-swatch" style="background:#e67e22;" title="Orange"></div>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-title">Size <span>−</span></div>
+      <div class="size-grid">
+        <button class="size-btn">XS</button>
+        <button class="size-btn active">S</button>
+        <button class="size-btn active">M</button>
+        <button class="size-btn">L</button>
+        <button class="size-btn">XL</button>
+        <button class="size-btn">XXL</button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-title">Rating <span>−</span></div>
+      <div class="filter-options">
+        <label class="filter-opt"><input type="checkbox"/><span>★★★★★ (5)</span><span class="filter-count">842</span></label>
+        <label class="filter-opt"><input type="checkbox" checked/><span>★★★★☆ (4+)</span><span class="filter-count">2,104</span></label>
+        <label class="filter-opt"><input type="checkbox"/><span>★★★☆☆ (3+)</span><span class="filter-count">3,220</span></label>
+      </div>
+    </div>
+
+    <button onclick="clearFilters()" style="width:100%;background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.7rem;font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Clear All Filters</button>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+    <!-- ACTIVE FILTERS -->
+    <div class="active-filters">
+      <div class="filter-tag">Women's Fashion <button onclick="this.parentElement.remove()">✕</button></div>
+      <div class="filter-tag">Size: S, M <button onclick="this.parentElement.remove()">✕</button></div>
+      <div class="filter-tag">Rating: 4+ <button onclick="this.parentElement.remove()">✕</button></div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <span class="results-count">Showing <strong>1–12</strong> of <strong>3,240</strong> products</span>
+      <div class="toolbar-right">
+        <select class="sort-select" onchange="sortProducts(this.value)">
+          <option>Sort: Featured</option>
+          <option>Price: Low to High</option>
+          <option>Price: High to Low</option>
+          <option>Newest First</option>
+          <option>Top Rated</option>
+          <option>Best Selling</option>
+        </select>
+        <div class="view-toggle">
+          <button class="view-btn active" onclick="setView('grid',this)" title="Grid">⊞</button>
+          <button class="view-btn" onclick="setView('list',this)" title="List">☰</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="products-grid" id="productsGrid">
+      <!-- 12 Product Cards -->
+      <div class="product-card" onclick="openModal('Oversized Wool Blazer','Zara Studio','🧥','₹4,999','₹7,499','A contemporary oversized blazer in premium Italian wool. Perfect for boardroom to brunch.',false,'linear-gradient(135deg,#1e1a14,#2d2418)')">
+        <div class="product-thumb" style="background:linear-gradient(135deg,#1e1a14,#2d2418);">🧥
+          <div class="product-badge">New</div>
+          <button class="wishlist-btn" onclick="toggleWish(event,this)">♡</button>
+          <div class="product-actions"><button class="add-cart-btn" onclick="addToCart(event)">Add to Cart</button></div>
+        </div>
+        <div class="product-info">
+          <div class="product-brand">Zara Studio</div>
+          <div class="product-name">Oversized Wool Blazer</div>
+          <div class="product-price"><span class="price">₹4,999</span><span class="price-old">₹7,499</span></div>
+          <div class="product-rating"><span class="stars">★★★★★</span><span class="rating-count">(128)</span></div>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="openModal('Air Max Pulse Trainer','Nike','👟','₹8,499','₹12,000','Next-gen cushioning meets street-ready design. Breathable mesh upper with React foam.',false,'linear-gradient(135deg,#14181e,#1e2430)')">
+        <div class="product-thumb" style="background:linear-gradient(135deg,#14181e,#1e2430);">👟
+          <div class="product-badge sale">Sale</div>
+          <button class="wishlist-btn" onclick="toggleWish(event,this)">♡</button>
+          <div class="product-actions"><button class="add-cart-btn" onclick="addToCart(event)">Add to Cart</button></div>
+        </div>
+        <div class="product-info">
+          <div class="product-brand">Nike</div>
+          <div class="product-name">Air Max Pulse Trainer</div>
+          <div class="product-price"><span class="price">₹8,499</span><span class="price-old">₹12,000</span></div>
+          <div class="product-rating"><span class="stars">★★★★☆</span><span class="rating-count">(94)</span></div>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="openModal('Leather Tote Bag','Coach','👜','₹14,999','','Full-grain leather tote with suede lining. Fits a 15\" laptop and all your essentials.',false,'linear-gradient(135deg,#1a1410,#2e2218)')">
+        <div class="product-thumb" style="background:linear-gradient(135deg,#1a1410,#2e2218);">👜
+          <div class="product-badge">Limited</div>
+          <button class="wishlist-btn" onclick="toggleWish(event,this)">♡</button>
+          <div class="product-actions"><button class="add-cart-btn" onclick="addToCart(event)">Add to Cart</button></div>
+        </div>
+        <div class="product-info">
+          <div class="product-brand">Coach</div>
+          <div class="product-name">Leather Tote Bag</div>
+          <div class="product-price"><span class="price">₹14,999</span></div>
+          <div class="product-rating"><span class="stars">★★★★★</span><span class="rating-count">(52)</span></div>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="openModal('Gold Stackable Ring Set','Tanishq','💍','₹6,200','','Set of 3 delicate 18K gold rings. Stackable design for effortless layering.',false,'linear-gradient(135deg,#181418,#261e26)')">
+        <div class="product-thumb" style="background:linear-gradient(135deg,#181418,#261e26);">💍
+          <button class="wishlist-btn" onclick="toggleWish(event,this)">♡</button>
+          <div class="product-actions"><button class="add-cart-btn" onclick="addToCart(event)">Add to Cart</button></div>
+        </div>
+        <div class="product-info">
+          <div class="product-brand">Tanishq</div>
+          <div class="product-name">Gold Stackable Ring Set</div>
+          <div class="product-price"><span class="price">₹6,200</span></div>
+          <div class="product-rating"><span class="stars">★★★★★</span><span class="rating-count">(211)</span></div>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="openModal('Silk Wrap Dress','H&M Studio','👗','₹3,499','₹4,999','Fluid silk-satin wrap dress with adjustable tie. Effortlessly elegant.',false,'linear-gradient(135deg,#181420,#241830)')">
+        <div class="product-thumb" style="background:linear-gradient(135deg,#181420,#241830);">👗
+          <div class="product-badge sale">Sale</div>
+          <button class="wishlist-btn" onclick="toggleWish(event,this)">♡</button>
+          <div class="product-actions"><button class="add-cart-btn" onclick="addToCart(event)">Add to Cart</button></div>
+        </div>
+        <div class="product-info">
+          <div class="product-brand">H&M Studio</div>
+          <div class="product-name">Silk Wrap Dress</div>
+          <div class="product-price"><span class="price">₹3,499</span><span class="price-old">₹4,999</span></div>
+          <div class="product-rating"><span class="stars">★★★★☆</span><span class="rating-count">(76)</span></div>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="openModal('Merino Crew Knit','Reiss','🧶','₹5,999','','100% extra-fine merino wool. A wardrobe classic in 8 versatile shades.',false,'linear-gradient(135deg,#121818,#1e2424)')">
+        <div class="product-thumb" style="background:linear-gradient(135deg,#121818,#1e2424);">🧶
+          <div class="product-badge">New</div>
+          <button class="wishlist-btn" onclick="toggleWish(event,this)">♡</button>
+          <div class="product-actions"><button class="add-cart-btn" onclick="addToCart(event)">Add to Cart</button></div>
+        </div>
+        <div class="product-info">
+          <div class="product-brand">Reiss</div>
+          <div class="product-name">Merino Crew Knit</div>
+          <div class="product-price"><span class="price">₹5,999</span></div>
+          <div class="product-rating"><span class="stars">★★★★★</span><span class="rating-count">(43)</span></div>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="openModal('Suede Chelsea Boots','Aldo','🥾','₹9,499','₹13,000','Premium suede upper with elastic side panels. Block heel for all-day comfort.',false,'linear-gradient(135deg,#1c1610,#2a2014)')">
+        <div class="product-thumb" style="background:linear-gradient(135deg,#1c1610,#2a2014);">🥾
+          <div class="product-badge sale">Sale</div>
+          <button class="wishlist-btn" onclick="toggleWish(event,this)">♡</button>
+          <div class="product-actions"><button class="add-cart-btn" onclick="addToCart(event)">Add to Cart</button></div>
+        </div>
+        <div class="product-info">
+          <div class="product-brand">Aldo</div>
+          <div class="product-name">Suede Chelsea Boots</div>
+          <div class="product-price"><span class="price">₹9,499</span><span class="price-old">₹13,000</span></div>
+          <div class="product-rating"><span class="stars">★★★★☆</span><span class="rating-count">(88)</span></div>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="openModal('Classic Analog Watch','Fossil','⌚','₹11,999','','Stainless steel case, genuine leather strap, sapphire crystal glass.',false,'linear-gradient(135deg,#141414,#202020)')">
+        <div class="product-thumb" style="background:linear-gradient(135deg,#141414,#202020);">⌚
+          <button class="wishlist-btn" onclick="toggleWish(event,this)">♡</button>
+          <div class="product-actions"><button class="add-cart-btn" onclick="addToCart(event)">Add to Cart</button></div>
+        </div>
+        <div class="product-info">
+          <div class="product-brand">Fossil</div>
+          <div class="product-name">Classic Analog Watch</div>
+          <div class="product-price"><span class="price">₹11,999</span></div>
+          <div class="product-rating"><span class="stars">★★★★★</span><span class="rating-count">(164)</span></div>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="openModal('Linen Wide-Leg Trousers','& Other Stories','👖','₹3,999','₹5,500','Breathable Belgian linen. High-waist wide-leg silhouette.',false,'linear-gradient(135deg,#161c12,#1e2818)')">
+        <div class="product-thumb" style="background:linear-gradient(135deg,#161c12,#1e2818);">👖
+          <div class="product-badge sale">Sale</div>
+          <button class="wishlist-btn" onclick="toggleWish(event,this)">♡</button>
+          <div class="product-actions"><button class="add-cart-btn" onclick="addToCart(event)">Add to Cart</button></div>
+        </div>
+        <div class="product-info">
+          <div class="product-brand">& Other Stories</div>
+          <div class="product-name">Linen Wide-Leg Trousers</div>
+          <div class="product-price"><span class="price">₹3,999</span><span class="price-old">₹5,500</span></div>
+          <div class="product-rating"><span class="stars">★★★★☆</span><span class="rating-count">(37)</span></div>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="openModal('Pearl Drop Earrings','Swarovski','💎','₹4,500','','Freshwater pearl with Swarovski crystal drop. Gold-plated sterling silver.',false,'linear-gradient(135deg,#1a1820,#26222e)')">
+        <div class="product-thumb" style="background:linear-gradient(135deg,#1a1820,#26222e);">💎
+          <div class="product-badge">Limited</div>
+          <button class="wishlist-btn" onclick="toggleWish(event,this)">♡</button>
+          <div class="product-actions"><button class="add-cart-btn" onclick="addToCart(event)">Add to Cart</button></div>
+        </div>
+        <div class="product-info">
+          <div class="product-brand">Swarovski</div>
+          <div class="product-name">Pearl Drop Earrings</div>
+          <div class="product-price"><span class="price">₹4,500</span></div>
+          <div class="product-rating"><span class="stars">★★★★★</span><span class="rating-count">(99)</span></div>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="openModal('Canvas Backpack','Herschel','🎒','₹5,200','₹6,500','Classic Heritage backpack. 23L capacity, laptop sleeve, signature stripe lining.',false,'linear-gradient(135deg,#141418,#1e1e22)')">
+        <div class="product-thumb" style="background:linear-gradient(135deg,#141418,#1e1e22);">🎒
+          <div class="product-badge sale">Sale</div>
+          <button class="wishlist-btn" onclick="toggleWish(event,this)">♡</button>
+          <div class="product-actions"><button class="add-cart-btn" onclick="addToCart(event)">Add to Cart</button></div>
+        </div>
+        <div class="product-info">
+          <div class="product-brand">Herschel</div>
+          <div class="product-name">Canvas Backpack</div>
+          <div class="product-price"><span class="price">₹5,200</span><span class="price-old">₹6,500</span></div>
+          <div class="product-rating"><span class="stars">★★★★☆</span><span class="rating-count">(58)</span></div>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="openModal('French Linen Shirt','Jacquemus','👕','₹7,800','','Relaxed-fit linen shirt with dropped shoulders. Made in Portugal.',false,'linear-gradient(135deg,#181018,#221422)')">
+        <div class="product-thumb" style="background:linear-gradient(135deg,#181018,#221422);">👕
+          <div class="product-badge">New</div>
+          <button class="wishlist-btn" onclick="toggleWish(event,this)">♡</button>
+          <div class="product-actions"><button class="add-cart-btn" onclick="addToCart(event)">Add to Cart</button></div>
+        </div>
+        <div class="product-info">
+          <div class="product-brand">Jacquemus</div>
+          <div class="product-name">French Linen Shirt</div>
+          <div class="product-price"><span class="price">₹7,800</span></div>
+          <div class="product-rating"><span class="stars">★★★★★</span><span class="rating-count">(31)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="pagination">
+      <button class="page-btn prev-next">← Prev</button>
+      <button class="page-btn active">1</button>
+      <button class="page-btn" onclick="this.classList.toggle('active')">2</button>
+      <button class="page-btn">3</button>
+      <button class="page-btn">4</button>
+      <span style="display:flex;align-items:center;color:var(--muted);padding:0 0.5rem;">...</span>
+      <button class="page-btn">12</button>
+      <button class="page-btn prev-next">Next →</button>
+    </div>
+  </main>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="productModal" onclick="closeModalOutside(event)">
+  <div class="modal" id="modalInner">
+    <div class="modal-image" id="modalImage">
+      <span id="modalEmoji">🧥</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-brand" id="modalBrand">Zara Studio</div>
+      <h2 class="modal-title" id="modalTitle">Oversized Wool Blazer</h2>
+      <div class="modal-rating"><span class="stars">★★★★★</span><span style="font-size:0.8rem;color:var(--muted);margin-left:0.3rem;">(128 reviews)</span></div>
+      <div class="modal-price">
+        <span class="price" id="modalPrice">₹4,999</span>
+        <span class="price-old" id="modalOldPrice">₹7,499</span>
+      </div>
+      <p class="modal-desc" id="modalDesc">A contemporary oversized blazer in premium Italian wool. Perfect for boardroom to brunch.</p>
+      <div class="option-label">Select Size</div>
+      <div class="sizes-row">
+        <button class="size-option" onclick="selectSize(this)">XS</button>
+        <button class="size-option active" onclick="selectSize(this)">S</button>
+        <button class="size-option" onclick="selectSize(this)">M</button>
+        <button class="size-option" onclick="selectSize(this)">L</button>
+        <button class="size-option" onclick="selectSize(this)">XL</button>
+      </div>
+      <div class="option-label">Quantity</div>
+      <div class="qty-row">
+        <div class="qty-ctrl">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <input class="qty-display" id="qtyDisplay" value="1" readonly/>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <span style="font-size:0.75rem;color:var(--muted);">Only 5 left in stock</span>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-primary" onclick="modalAddCart()">🛒 Add to Cart</button>
+        <button class="btn-outline" onclick="toggleWish(event,this)">♡</button>
+      </div>
+      <div class="modal-features">
+        <div class="feature-item"><span class="feature-icon">🚚</span> Free delivery on orders over ₹999</div>
+        <div class="feature-item"><span class="feature-icon">↩️</span> Easy 30-day returns & exchanges</div>
+        <div class="feature-item"><span class="feature-icon">✅</span> 100% authentic — guaranteed</div>
+        <div class="feature-item"><span class="feature-icon">🔒</span> Secure checkout, multiple payment options</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CART NOTIFICATION -->
+<div id="cartNotif" style="position:fixed;bottom:2rem;right:2rem;background:var(--accent);color:#000;padding:1rem 1.5rem;font-size:0.85rem;font-weight:600;z-index:999;transform:translateY(100px);transition:transform 0.4s;pointer-events:none;">✓ Added to cart!</div>
+
+<script>
+  let cartCount = 0;
+  let qty = 1;
+
+  function openModal(title, brand, emoji, price, oldPrice, desc, outOfStock, bg) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalBrand').textContent = brand;
+    document.getElementById('modalEmoji').textContent = emoji;
+    document.getElementById('modalPrice').textContent = price;
+    document.getElementById('modalOldPrice').textContent = oldPrice;
+    document.getElementById('modalDesc').textContent = desc;
+    document.getElementById('modalImage').style.background = bg;
+    qty = 1;
+    document.getElementById('qtyDisplay').value = 1;
+    document.getElementById('productModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('productModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('productModal')) closeModal();
+  }
+
+  function selectSize(btn) {
+    document.querySelectorAll('.size-option').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function changeQty(delta) {
+    qty = Math.max(1, Math.min(10, qty + delta));
+    document.getElementById('qtyDisplay').value = qty;
+  }
+
+  function addToCart(e) {
+    e.preventDefault(); e.stopPropagation();
+    cartCount++;
+    document.getElementById('cartCount').textContent = cartCount;
+    showCartNotif();
+  }
+
+  function modalAddCart() {
+    cartCount++;
+    document.getElementById('cartCount').textContent = cartCount;
+    showCartNotif();
+    closeModal();
+  }
+
+  function showCartNotif() {
+    const n = document.getElementById('cartNotif');
+    n.style.transform = 'translateY(0)';
+    setTimeout(() => n.style.transform = 'translateY(100px)', 2000);
+  }
+
+  function toggleWish(e, btn) {
+    e.preventDefault(); e.stopPropagation();
+    btn.textContent = btn.textContent === '♡' ? '♥' : '♡';
+    btn.style.color = btn.textContent === '♥' ? '#e05555' : '';
+  }
+
+  function setView(mode, btn) {
+    const grid = document.getElementById('productsGrid');
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    grid.className = mode === 'list' ? 'products-grid list-view' : 'products-grid';
+  }
+
+  function sortProducts(val) { /* Could implement real sort */ }
+
+  function clearFilters() {
+    document.querySelectorAll('.filter-opt input').forEach(i => i.checked = false);
+    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+    document.getElementById('priceRange').value = 50000;
+    document.getElementById('priceVal').textContent = '₹50,000';
+  }
+
+  function toggleCart() { alert('Cart: ' + cartCount + ' item(s) in cart. Proceed to checkout!'); }
+
+  // Pagination
+  document.querySelectorAll('.page-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      if (this.classList.contains('prev-next')) return;
+      document.querySelectorAll('.page-btn:not(.prev-next)').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  // Size buttons in sidebar
+  document.querySelectorAll('.size-btn').forEach(btn => {
+    btn.addEventListener('click', function() { this.classList.toggle('active'); });
+  });
+
+  // Color swatches
+  document.querySelectorAll('.color-swatch').forEach(s => {
+    s.addEventListener('click', function() {
+      document.querySelectorAll('.color-swatch').forEach(x => x.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
